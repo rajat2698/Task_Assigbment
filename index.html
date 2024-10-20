@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Assignment System</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #020e1b; /* Changed background color to grayish blue */
+            color: white; /* Set text color to white */
+        }
+        .container {
+            max-width: 1200px; /* Increase the max-width of the container */
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #0a1e38; /* Changed background color to lighter grayish blue */
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            color: white; /* Set text color to white */
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #f8f7f7;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .form-group input, .form-group select {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            color: white; /* Set text color to white */
+            background-color: #4e5d6c; /* Set input background color to match page background */
+        }
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #00BFA5;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .form-group button:hover {
+            background-color: #00A188;
+        }
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            color: white; /* Set text color to white */
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            color: white; /* Set text color to white */
+        }
+        th {
+            background-color: transparent;
+        }
+        .table-actions {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+        .table-actions button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            background-color: #00BFA5 ;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .table-actions button:hover {
+            background-color: #00A188;
+        }
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .close:hover,
+        .close:focus {
+            color: #555;
+        }
+        .hidden {
+            display: none;
+        }
+        #task::placeholder {
+            color: white; /* Set placeholder text color to white */
+        }
+
+        #name::placeholder,
+        #details::placeholder {
+        color: white; /* Set placeholder text color to white */
+        }
+        #name::placeholder,
+        #details::placeholder {
+        color: white; /* Set placeholder text color to white */
+        }
+
+        /* Dashboard Styles */
+        .dashboard {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #00BFA5; /* Set button background color to green */
+            border-radius: 5px;
+            margin-right: 10px;
+            transition: background-color 0.3s ease;
+            color: white; /* Set button text color to white */
+        }
+        .tab:hover {
+            background-color: #00A188; /* Darker green on hover */
+        }
+        .tab.active {
+            background-color: #00BFA5; /* Home Button Color */
+            color: white;
+        }
+        .tab-content {
+            display: none;
+            margin-top: 20px;
+            color: black; /* Set text color to black */
+        }
+        .tab-content.active {
+            display: block;
+        }
+        /* Logout Button Styling */
+        .logout-container button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: #00BFA5; /* Set button background color to green */
+            color: white; /* Set button text color to white */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .logout-container button:hover {
+            background-color: #00A188; /* Darker green on hover */
+        }
+    </style>
+</head>
+<body>
+
+
+<div class="container">
+    <!-- Task Management Section -->
+    <div id="taskSection" class="tab-content active">
+        <h1>Task Assignment System</h1>
+        <!-- Add Task Button -->
+        <div class="table-actions">
+            <button id="addTaskBtn">Add Task</button>
+        </div>
+
+        <!-- Task Table -->
+        <table>
+            <thead>
+            <tr>
+                <th>Serial No.</th>
+                <th>Task</th>
+                <th>Assigned to</th>
+                <th>Due Date</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Attachment</th>
+                <th>Action</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody id="taskBody">
+            <!-- Task rows will be inserted here dynamically -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Task Modal -->
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Add Task</h2>
+            <div class="form-group">
+                <label for="task">Task:</label>
+                <input type="text" id="task" placeholder="Enter task">
+            </div>
+            <div class="form-group">
+                <label for="employee">Assign to:</label>
+                <select id="employeeSelect">
+                    <!-- Employee options will be populated dynamically -->
+                </select>
+                <input type="text" id="otherEmployeeInput" class="hidden" placeholder="Enter other employee's name">
+            </div>
+            <div class="form-group">
+                <label for="dueDate">Due Date:</label>
+                <input type="date" id="dueDate">
+            </div>
+            <div class="form-group">
+                <label for="priority">Priority:</label>
+                <select id="priority">
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="status">Status:</label>
+                <select id="status">
+                    <option value="To Do">To Do</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="attachment">Attachment:</label>
+                <input type="file" id="attachment">
+            </div>
+            <div class="form-group">
+                <button onclick="assignTask()">Assign Task</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Employees Management Section -->
+    <div id="employeeSection" class="tab-content">
+        <h1>Employees</h1>
+        <!-- Add Employee Button -->
+        <div class="table-actions">
+            <button id="addEmployeeBtn">Add Employee</button>
+        </div>
+
+        <!-- Employee List -->
+        <div id="employeeList">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email ID</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Employee rows will be inserted here dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Employee Modal -->
+    <div id="employeeModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEmployeeModal()">&times;</span>
+            <h2>Add Employee</h2>
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" placeholder="Enter employee name">
+            </div>
+            <div class="form-group">
+                <label for="details">Email ID:</label>
+                <input type="text" id="details" placeholder="Enter the email id">
+            </div>
+            <div class="form-group">
+                <button onclick="addEmployee()">Add Employee</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard with tabs -->
+    <div class="dashboard">
+        <div class="tab active" onclick="showTab('taskSection')">Home</div>
+        <div class="tab" onclick="showTab('employeeSection')">Employees</div>
+        <div class="tab" onclick="showTab('aboutSection')">About</div>
+        <div class="logout-container">
+            <button onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <!-- About Section -->
+   <!-- About Section -->
+<div id="aboutSection" class="tab-content">
+    <h2 style="color: white;">About Task Assignment System</h2> <!-- Change heading color to white -->
+    <p style="color: white;">Our Task Assignment System is designed to streamline your workflow by providing a centralized platform for managing tasks and assigning them to team members. With intuitive features such as task prioritization, due date tracking, and status updates, you can ensure that every project progresses smoothly from inception to completion. Whether you're a small startup or a large enterprise, our system adapts to your needs, offering flexibility and efficiency at every step. Empower your team to collaborate seamlessly and achieve their goals with our Task Assignment System.</p> <!-- Change paragraph text color to white -->
+</div>
+
+
+<script>
+        // Function to display tasks assigned to the logged-in employee
+        function displayEmployeeTasks() {
+            var loggedInEmployee = JSON.parse(localStorage.getItem('loggedInEmployee'));
+            var tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            var employeeTasks = tasks.filter(function(task) {
+                return task.employee === loggedInEmployee.name; // Assuming 'name' is the property in employee object
+            });
+            displayTasks(employeeTasks); // Update the task table with employee tasks
+        }
+    
+        // Function to display tasks in the table
+        function displayTasks(tasks) {
+            var taskTable = document.getElementById('taskBody');
+            taskTable.innerHTML = ''; // Clear existing rows
+            tasks.forEach(function(task, index) {
+                var newRow = createTaskRow(task, index); // Create a new row using the function
+                taskTable.appendChild(newRow);
+            });
+        }
+    
+        // Function to load tasks from local storage when the page loads
+        window.onload = function() {
+            var loggedIn = localStorage.getItem('loggedIn'); // Check if someone is logged in
+            if (loggedIn && loggedIn === 'true') {
+                // If logged in, check if it's a manager or an employee
+                var loggedInEmployee = JSON.parse(localStorage.getItem('loggedInEmployee'));
+                if (loggedInEmployee) {
+                    // If it's an employee, display only their tasks
+                    displayEmployeeTasks();
+                } else {
+                    // If it's a manager, display all tasks
+                    loadTasksFromLocalStorage();
+                }
+            } 
+        };
+    
+    function redirectToEmployeeLogin() {
+        window.location.href = "login1.html";
+    }
+
+    function redirectToManagerLogin() {
+        window.location.href = "login.html";
+    }
+    // Function to open modal
+    function openModal() {
+        document.getElementById('taskModal').style.display = 'block';
+    }
+
+    // Function to close modal
+    function closeModal() {
+        document.getElementById('taskModal').style.display = 'none';
+    }
+
+    // Function to open employee modal
+    function openEmployeeModal() {
+        document.getElementById('employeeModal').style.display = 'block';
+    }
+
+    // Function to close employee modal
+    function closeEmployeeModal() {
+        document.getElementById('employeeModal').style.display = 'none';
+    }
+
+    // Function to toggle other input based on selection
+    function toggleOtherInput() {
+        var assignToSelect = document.getElementById("employeeSelect");
+        var otherInput = document.getElementById("otherEmployeeInput");
+        if (assignToSelect.value === "other") {
+            otherInput.classList.remove("hidden");
+        } else {
+            otherInput.classList.add("hidden");
+        }
+    }
+
+    // Add event listener to Add Task button
+    document.getElementById("addTaskBtn").addEventListener("click", function() {
+        openModal();
+        toggleOtherInput();
+        populateEmployeeOptions(); // Populate employee options dynamically
+    });
+
+    // Function to populate employee options dynamically
+    function populateEmployeeOptions() {
+        var employeeSelect = document.getElementById("employeeSelect");
+        employeeSelect.innerHTML = ''; // Clear existing options
+        var employees = JSON.parse(localStorage.getItem('employees')) || [];
+        employees.forEach(function(employee) {
+            var option = document.createElement('option');
+            option.value = employee.name;
+            option.textContent = employee.name;
+            employeeSelect.appendChild(option);
+        });
+    }
+
+    // Add event listener to employee select dropdown
+    document.getElementById("employeeSelect").addEventListener("change", toggleOtherInput);
+
+    // Function to load tasks from local storage
+    function loadTasksFromLocalStorage() {
+        var tasks = JSON.parse(localStorage.getItem('tasks'));
+        if (tasks) {
+            var taskTable = document.getElementById('taskBody');
+            tasks.forEach(function(task, index) {
+                var newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${task.task}</td>
+                        <td>${task.employee}</td>
+                        <td>${task.dueDate}</td>
+                        <td>${task.priority}</td>
+                        <td>${task.status}</td>
+                        <td>${task.attachment}</td>
+                        <td><button onclick="editTask(this)">Edit</button></td>
+                    `;
+                taskTable.appendChild(newRow);
+            });
+        }
+    }
+
+    // Function to save tasks to local storage
+    function saveTasksToLocalStorage(tasks) {
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+
+    // Function to assign task
+    function assignTask() {
+        var task = document.getElementById('task').value;
+        var employeeSelect = document.getElementById('employeeSelect');
+        var employee = employeeSelect.value === "other" ? document.getElementById('otherEmployeeInput').value : employeeSelect.value;
+        var dueDate = document.getElementById('dueDate').value;
+        var priority = document.getElementById('priority').value;
+        var status = document.getElementById('status').value;
+        var attachment = document.getElementById('attachment').value;
+
+        var tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        tasks.push({
+            task: task,
+            employee: employee,
+            dueDate: dueDate,
+            priority: priority,
+            status: status,
+            attachment: attachment
+        });
+        saveTasksToLocalStorage(tasks);
+        displayTasks(); // Update the task table
+        closeModal(); // Close modal after assigning task
+    }
+
+    // Function to display tasks in the table
+    
+    function createTaskRow(task, index) {
+        var newRow = document.createElement('tr');
+        newRow.innerHTML = `
+        <td style="color: white; overflow: hidden; white-space: nowrap;">${index + 1}</td> <!-- Change text color to white -->
+        <td style="color: white; overflow: hidden; white-space: nowrap;">${task.task}</td> <!-- Change text color to white -->
+        <td style="color: white; overflow: hidden; white-space: nowrap;">${task.employee}</td> <!-- Change text color to white -->
+        <td style="color: white; overflow: hidden; white-space: nowrap;">${task.dueDate}</td> <!-- Change text color to white -->
+        <td style="color: white; overflow: hidden; white-space: nowrap;">${task.priority}</td> <!-- Change text color to white -->
+        <td style="color: white; overflow: hidden; white-space: nowrap;">${task.status}</td> <!-- Change text color to white -->
+        <td style="color: white; overflow: hidden; white-space: nowrap;">${task.attachment}</td> <!-- Change text color to white -->
+        <td><button onclick="editTask(this)">Edit</button></td>
+        <td><button class="delete-btn" onclick="deleteTask(this)">Delete</button></td>        
+        `;
+        return newRow;
+    }
+
+    document.getElementById('taskBody').addEventListener('click', function(event) {
+        if (event.target && event.target.nodeName === 'BUTTON' && event.target.classList.contains('delete-task')) {
+            deleteTask(event.target);
+        }
+    });
+    
+    function displayTasks() {
+        var taskTable = document.getElementById('taskBody');
+        taskTable.innerHTML = ''; // Clear existing rows
+        var tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        tasks.forEach(function(task, index) {
+            var newRow = createTaskRow(task, index); // Create a new row using the function
+            taskTable.appendChild(newRow);
+        });
+    }
+    
+
+    function deleteTask(btn) {
+        var row = btn.parentNode.parentNode;
+        var index = row.cells[0].innerText - 1; // Get the index of the task
+        var tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        tasks.splice(index, 1);
+        saveTasksToLocalStorage(tasks);
+        displayTasks(); // Update the task table
+    }    
+    
+    // Function to edit task
+    function editTask(btn) {
+        var row = btn.parentNode.parentNode;
+        var index = row.cells[0].innerText - 1; // Get the index of the task
+        var tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        var task = tasks[index];
+        document.getElementById('task').value = task.task;
+        document.getElementById('employeeSelect').value = task.employee;
+        document.getElementById('dueDate').value = task.dueDate;
+        document.getElementById('priority').value = task.priority;
+        document.getElementById('status').value = task.status;
+        // Remove the edited task
+        tasks.splice(index, 1);
+        saveTasksToLocalStorage(tasks);
+        displayTasks(); // Update the task table
+        openModal(); // Open modal for editing
+        toggleOtherInput(); // Toggle other input based on selection
+    }
+
+    // Load tasks from local storage when the page loads
+    window.onload = function() {
+        loadTasksFromLocalStorage();
+        displayEmployees(); // Display employees when the page loads
+        populateEmployeeOptions(); // Populate employee options in task modal
+    };
+
+    var loggedIn = localStorage.getItem('loggedIn');
+    if (!loggedIn || loggedIn !== 'true') {
+        // Redirect to login page if not logged in
+        window.location.href = "login.html";
+    }
+
+    // Function to show tab content
+    function showTab(tabId) {
+        var tabs = document.querySelectorAll('.tab-content');
+        for (var i = 0; i < tabs.length; i++) {
+            tabs[i].classList.remove('active');
+        }
+        document.getElementById(tabId).classList.add('active');
+    }
+
+    function logout() {
+        localStorage.removeItem('loggedIn');
+        window.location.href = "login.html"; // Redirect to login page after logout
+    }
+
+    // Employees Section
+    // Add employee functionality
+    document.getElementById("addEmployeeBtn").addEventListener("click", function() {
+        openEmployeeModal();
+    });
+
+    // Function to add employee
+    function addEmployee() {
+        var name = document.getElementById('name').value;
+        var details = document.getElementById('details').value;
+
+        var employees = JSON.parse(localStorage.getItem('employees')) || [];
+        employees.push({
+            name: name,
+            details: details
+        });
+        localStorage.setItem('employees', JSON.stringify(employees));
+        displayEmployees(); // Update the employee list
+        populateEmployeeOptions(); // Update employee options in task modal
+        closeEmployeeModal(); // Close modal after adding employee
+    }
+
+    // Function to display employees in the list
+    function displayEmployees() {
+        var employeeList = document.querySelector('#employeeSection tbody');
+        employeeList.innerHTML = ''; // Clear existing list
+        var employees = JSON.parse(localStorage.getItem('employees')) || [];
+        employees.forEach(function(employee, index) {
+            var newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${employee.name}</td>
+                <td>${employee.details}</td>
+                <td><button onclick="removeEmployee(${index})">Remove</button></td>
+            `;
+            employeeList.appendChild(newRow);
+        });
+    }
+
+    // Function to remove employee
+    function removeEmployee(index) {
+        var employees = JSON.parse(localStorage.getItem('employees')) || [];
+        employees.splice(index, 1);
+        localStorage.setItem('employees', JSON.stringify(employees));
+        displayEmployees(); // Update the employee list
+        populateEmployeeOptions(); // Update employee options in task modal
+    }
+
+   
+</script>
+</body>
+</html>
